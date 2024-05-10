@@ -7,7 +7,6 @@ import {
   Table,
 } from 'sequelize-typescript';
 
-import { ProductModel } from '../../product/sequelize/product.model';
 import { OrderModel } from './order-model';
 
 interface IOrderItemModel {
@@ -32,16 +31,12 @@ class OrderItemModel extends Model implements IOrderItemModel {
   })
   declare id: string;
 
-  @ForeignKey(() => ProductModel)
   @Column({
     field: 'product_id',
     allowNull: false,
     type: DataType.STRING,
   })
   declare productId: string;
-
-  @BelongsTo(() => ProductModel)
-  declare product: ProductModel;
 
   @ForeignKey(() => OrderModel)
   @Column({

@@ -8,7 +8,6 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { CustomerModel } from '../../customer/sequelize/customer.model';
 import { OrderItemModel } from './order-item-model';
 import { CreationOptional } from 'sequelize';
 
@@ -34,16 +33,12 @@ class OrderModel extends Model implements IOrderModel {
   })
   declare id: string;
 
-  @ForeignKey(() => CustomerModel)
   @Column({
     field: 'customer_id',
     allowNull: false,
     type: DataType.STRING,
   })
   declare customerId: string;
-
-  @BelongsTo(() => CustomerModel)
-  declare customer: CustomerModel;
 
   @HasMany(() => OrderItemModel)
   declare orderItems: OrderItemModel[];
