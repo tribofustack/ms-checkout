@@ -45,6 +45,7 @@ import { PayOrder } from '../../../internal/application/useCases/checkout/pay-or
     PayOrder,
     { provide: 'EventEmitter', useExisting: EventEmitter2 },
     { provide: 'IdGenerator', useExisting: Uuid },
+    { provide: 'OrderRepository', useExisting: OrderSequelizeRepository},
   ],
 })
 export class OrderModule { }
