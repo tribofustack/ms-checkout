@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EXCHANGE, ORDER_BINDING_KEY } from 'src/internal/application/configs/queue';
+import { EXCHANGE } from 'src/internal/application/configs/queue';
 import { IMessageBroker, IPublisher } from 'src/internal/application/ports/queues/message-broker';
 
 @Injectable()

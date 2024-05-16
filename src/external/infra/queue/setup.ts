@@ -1,7 +1,6 @@
 import { IMessageBroker } from 'src/internal/application/ports/queues/message-broker';
 import {
   EXCHANGE,
-  ORDER_BINDING_KEY,
   ORDER_QUEUE,
   PAYMENT_BINDING_KEY,
   PAYMENT_QUEUE,
