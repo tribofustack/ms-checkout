@@ -39,7 +39,7 @@ export class CreateOrder {
             createdAt: new Date()
         });
 
-        // await this.orderRepository.create(order);
+        await this.orderRepository.create(order);
         this.eventEmitter.emit('order.created', new CreatedOrderEvent(order));
 
         return order;
