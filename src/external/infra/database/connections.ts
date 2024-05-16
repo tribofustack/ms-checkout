@@ -8,7 +8,7 @@ const conn = {
   password: env.dbPassword,
   port: env.dbPort,
   logging: false,
-  sync: { force: true },
+  // sync: { force: true },
   autoLoadModels: true,
 };
 

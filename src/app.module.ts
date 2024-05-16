@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { OrderModule } from './external/adapters/checkout/order.module';
 import DatabaseModule from './external/infra/database';
-import QueueModule from './external/infra/queue';
 import TokenGeneratorModule from './external/infra/tokens';
 import { Jwt } from './external/infra/tokens/jwt/jwt';
+import { HealthController } from './external/api/health/health.controller';
+
 @Module({
   imports: [
     OrderModule,
-    QueueModule,
     DatabaseModule,
     TokenGeneratorModule,
     EventEmitterModule.forRoot(),
@@ -18,7 +18,10 @@ import { Jwt } from './external/infra/tokens/jwt/jwt';
       envFilePath: ['.env.production', '.env'],
     }),
   ],
-  controllers: [],
-  providers: [Jwt, { provide: 'TokenGenerator', useExisting: Jwt }],
+  controllers: [HealthController],
+  providers: [
+    Jwt,
+    { provide: 'TokenGenerator', useExisting: Jwt },
+  ],
 })
 export class AppModule {}

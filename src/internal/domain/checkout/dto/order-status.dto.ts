@@ -1,7 +1,7 @@
 export type orderStatusDto =
   | 'Recebido'
   | 'Pendente de pagamento'
-  | 'Pago'
+  | 'Aprovado'
   | 'Cancelado'
   | 'Em preparação'
   | 'Pronto'

@@ -16,7 +16,7 @@ export class GetOrderStatus {
 
         let timeToWait = 'Pedido ainda não foi iniciado.';
 
-        if (status === 'Pago') timeToWait = 'Tempo de espera: 45 minutos.';
+        if (status === 'Aprovado') timeToWait = 'Tempo de espera: 45 minutos.';
 
         if (status === 'Em preparação') timeToWait = 'Tempo de espera: 30 minutos.';
 
