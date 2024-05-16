@@ -1,3 +1,3 @@
-import { QueueModule } from './bullmq';
+import { RabbitMQ } from './rabbitmq'
 
-export default QueueModule;
+export default RabbitMQ 

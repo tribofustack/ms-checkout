@@ -24,7 +24,7 @@ export const initDatabase = async () => {
   await sequelize.authenticate({ logging: false });
 
   sequelize.addModels(sequelizeModels);
-  await sequelize.sync({ force: true });
+  // await sequelize.sync({ force: true });
 
   return sequelize;
 };

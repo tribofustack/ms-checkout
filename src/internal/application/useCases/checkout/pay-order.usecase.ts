@@ -10,7 +10,6 @@ export class PayOrder {
     constructor(
         @Inject('OrderRepository')
         private orderRepository: IOrderRepository,
-
         @Inject('EventEmitter')
         private eventEmitter: IEventEmitter,
     ) { }
