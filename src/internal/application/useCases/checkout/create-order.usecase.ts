@@ -2,13 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from 'src/internal/domain/checkout/dto/create-order.dto';
 import { OrderItem } from 'src/internal/domain/checkout/entities/order-item.entity';
 import { Order } from 'src/internal/domain/checkout/entities/order.entity';
-// import { CreatedOrderEvent } from 'src/internal/domain/checkout/events/order-created.event';
 import { IOrderRepository } from 'src/internal/domain/checkout/repositories/order.repository';
 import { IIdentifierGenerator } from 'src/internal/application/ports/tokens/id-generator';
 import { IEventEmitter } from '../../ports/events/event';
 import { ICheckinService } from '../../ports/integrations/checkin';
 import { CreatedOrderEvent } from 'src/internal/domain/checkout/events/order-created.event';
-import { ChangedOrderStatusEvent } from 'src/internal/domain/checkout/events/order-status-changed.event';
 
 @Injectable()
 export class CreateOrder {
