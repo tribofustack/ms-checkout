@@ -34,22 +34,10 @@ jobs:
           cluster_name: ${{ vars.CLUSTER_NAME }}
           location: ${{ vars.ZONE }}
 
-      - name: Configure Docker Client
-        run: |-
-          gcloud auth configure-docker --quiet
-          gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev --quiet
-
-      - name: Publish docker image
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.CREDENTIALS }}
-        run: |
-          docker build -t ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/repository/ms-checkout:${{ github.run_id }} .
-          docker push ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/repository/ms-checkout:${{ github.run_id }}
-
       - name: Setup Namespace
         run: kubectl config set-context --current --namespace=orderly
 
-      - name: Create ConfigMap
+      - name: apply configmap
         working-directory: k8s/
         run: |
           echo "$(cat api-configmap.yaml)" | envsubst | kubectl apply -f -
@@ -59,10 +47,8 @@ jobs:
           DB_USERNAME: ${{ vars.DB_USERNAME }}
           DB_NAME: ${{ vars.DB_NAME }}
 
-      - name: apply api
-        env:
-          IMAGE_NAME: ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/repository/ms-checkout:${{ github.run_id }}
+      - name: apply checkout api
         run: |
-          echo "$(cat k8s/api-deployment.yaml)" | envsubst | kubectl apply -f -
+          kubectl apply -f k8s/api-deployment.yaml 
           kubectl apply -f k8s/api-hpa.yaml
           kubectl apply -f k8s/api-service.yaml
