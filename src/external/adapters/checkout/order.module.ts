@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Uuid } from 'src/external/infra/tokens/uuid/uuid';
 import { ChangeOrderStatusListener } from './listeners/change-order-status.listener';
-import { OrderCreatedListener } from './listeners/order-created';
+import { OrderCreatedListener } from './listeners/order-created.listener';
 import { OrderController } from './order.controller';
 import { OrderItemModel } from './sequelize/order-item-model';
 import { OrderModel } from './sequelize/order-model';

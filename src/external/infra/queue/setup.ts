@@ -3,12 +3,14 @@ import {
   EXCHANGE,
   ORDER_BINDING_KEY,
   ORDER_QUEUE,
+  PAYMENT_BINDING_KEY,
+  PAYMENT_QUEUE,
 } from 'src/internal/application/configs/queue';
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { PayOrderConsumer } from 'src/external/adapters/checkout/rabbitmq/consumers/order-paid.consumer';
 
 @Injectable()
-export class OrderQueueSetup implements OnModuleInit {
+export class OrderQueueSetup implements OnApplicationBootstrap {
   constructor(
     @Inject('MessageBroker')
     private broker: IMessageBroker,
@@ -16,10 +18,10 @@ export class OrderQueueSetup implements OnModuleInit {
     private payOrderConsumer: PayOrderConsumer,
   ) {}
 
-  async onModuleInit() {
+  async onApplicationBootstrap() {
     try {
       console.time('Start message broker');
-      await this.init();
+      setTimeout(async () => this.init(), 20000);
       console.timeEnd('Start message broker');
     }catch(error) {
       console.error(error.message)
@@ -31,11 +33,11 @@ export class OrderQueueSetup implements OnModuleInit {
     await this.broker.createExchange(EXCHANGE);
     await this.broker.createQueue(ORDER_QUEUE);
     await this.broker.bindQueueInExchange({
-      queue: ORDER_QUEUE,
+      queue: PAYMENT_QUEUE,
       exchange: EXCHANGE,
-      bindigKey: ORDER_BINDING_KEY,
+      bindigKey: PAYMENT_BINDING_KEY,
     });    
     // quando consumir vai atualizar o pedido
-    await this.broker.consume(ORDER_QUEUE, (message) => this.payOrderConsumer.handle(message));
+    await this.broker.consume(PAYMENT_QUEUE, (message) => this.payOrderConsumer.handle(message));
   }
 }

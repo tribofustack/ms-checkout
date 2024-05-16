@@ -13,7 +13,7 @@ export class OrderPublisher implements IPublisher {
     await this.messageBroker.publishInExchange({
       exchange: EXCHANGE,
       message: JSON.stringify(message),
-      routingKey: `${ORDER_BINDING_KEY}.created`,
+      routingKey: `orders.created`,
     });
   }
 }

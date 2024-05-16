@@ -18,7 +18,7 @@ export class PrepareOrder {
         const order = await this.orderRepository.findOne(orderId);
         if (!order) throw new NotFoundException('Order not found');
 
-        if (order.status !== 'Pago')
+        if (order.status !== 'Aprovado')
             throw new DomainException('Order status is invalid');
 
         this.eventEmitter.emit(

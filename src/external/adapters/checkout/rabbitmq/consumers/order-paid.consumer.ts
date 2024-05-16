@@ -9,6 +9,11 @@ export class PayOrderConsumer {
     ) {}
     
     async handle(message: any) {
-        await this.payOrderUseCase.execute(message)
+        try {
+            console.log('PayOrderConsumer', message)
+            await this.payOrderUseCase.execute(message)
+        }catch(error) {
+            console.error('PayOrderConsumer', error.message)
+        }
     }
 }
