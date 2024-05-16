@@ -7,14 +7,15 @@ import {
   LoadedOrdersSwagger,
   ReportByCustomerOrderSwagger,
 } from 'src/internal/application/docs/swagger/checkout/create-order.dto';
+import {
+  CreateOrder,
+  FindAllOrders,
+  GetCustomerReport,
+  GetOrderStatus,
+  PrepareOrder,
+  WithdrawnOrder
+} from 'src/internal/application/useCases/checkout';
 import { CreateOrderDto } from 'src/internal/domain/checkout/dto/create-order.dto';
-
-import { CreateOrder } from '../../../internal/application/useCases/checkout/create-order.usecase';
-import { PrepareOrder } from '../../../internal/application/useCases/checkout/prepare-order.usecase';
-import { WithdrawnOrder } from '../../../internal/application/useCases/checkout/withdraw-order-usecase';
-import { FindAllOrders } from '../../../internal/application/useCases/checkout/find-all-orders.usecase';
-import { GetOrderStatus } from '../../../internal/application/useCases/checkout/get-order-status.usecase';
-import { GetCustomerReport } from '../../../internal/application/useCases/checkout/get-customer-report.usecase';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -38,9 +39,6 @@ export class OrderController {
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
     try {
-      // Change it
-      // this.findCustomerById.execute(createOrderDto.customerId);
-      // await this.verifyProductQuantity.execute(createOrderDto.products);
       return await this.createOrder.execute(createOrderDto);
     } catch (err) {
       return responseError(err);
