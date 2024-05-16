@@ -48,13 +48,6 @@ export class CreateOrder {
         await this.orderRepository.create(order);        
         
         this.eventEmitter.emit('order.created', new CreatedOrderEvent(order));
-        // this.eventEmitter.emit(
-        //     'order-status.changed',
-        //     new ChangedOrderStatusEvent({
-        //         orderId: order.id,
-        //         status: 'Pendente de pagamento',
-        //     })
-        // );
 
         return order;
     }

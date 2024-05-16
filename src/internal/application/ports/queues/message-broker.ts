@@ -1,5 +1,5 @@
 export interface IMessageBroker {
-  start(): Promise<void>;
+  connect(): Promise<void>;
   createQueue(queueName: string): Promise<void>;
   createExchange(exchangeName: string): Promise<void>;
   bindQueueInExchange({

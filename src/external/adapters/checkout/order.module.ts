@@ -20,8 +20,9 @@ import {
 import { AxiosHttp } from 'src/external/infra/http/axios';
 import { CheckinService } from '../checkin/checkin.api';
 import { OrderPublisher } from './rabbitmq/publishers/order.publisher';
-import { PaymentPublisher } from './rabbitmq/publishers/payment.publisher';
-import QueueModule from 'src/external/infra/queue';
+import { OrderQueueSetup } from 'src/external/infra/queue/setup';
+import { RabbitMQ } from 'src/external/infra/queue/rabbitmq';
+import { PayOrderConsumer } from './rabbitmq/consumers/order-paid.consumer';
 
 @Module({
   imports: [
@@ -46,15 +47,18 @@ import QueueModule from 'src/external/infra/queue';
     AxiosHttp,
     CheckinService,
     OrderPublisher,
-    PaymentPublisher,
-    QueueModule,
+    OrderQueueSetup,
+    PayOrderConsumer,
     { provide: 'Http', useExisting: AxiosHttp },
     { provide: 'EventEmitter', useExisting: EventEmitter2 },
     { provide: 'IdGenerator', useExisting: Uuid },
     { provide: 'OrderRepository', useExisting: OrderSequelizeRepository },
     { provide: 'CheckinService', useExisting: CheckinService },
-    { provide: 'MessageBroker', useExisting: QueueModule },
-    { provide: 'OrderPublisher', useExisting: OrderPublisher }
+    RabbitMQ,
+    { provide: 'MessageBroker', useExisting: RabbitMQ },
+    { provide: 'OrderPublisher', useExisting: OrderPublisher },
+    { provide: 'PayOrderConsumer', useExisting: PayOrderConsumer },
+    { provide: 'PayOrder', useExisting: PayOrder },
   ],
 })
 export class OrderModule { }

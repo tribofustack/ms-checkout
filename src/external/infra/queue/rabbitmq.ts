@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Channel, Connection, Message, connect } from 'amqplib';
-
 import { env } from 'src/internal/application/configs/env';
 import { IMessageBroker } from 'src/internal/application/ports/queues/message-broker';
 
@@ -9,7 +8,7 @@ export class RabbitMQ implements IMessageBroker {
   private conn: Connection;
   private channel: Channel;
 
-  async start(): Promise<void> {
+  async connect(): Promise<void> {
     const connection = {
       hostname: env.amqpHost,
       password: env.amqpPass,
