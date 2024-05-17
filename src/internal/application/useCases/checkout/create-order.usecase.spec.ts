@@ -14,7 +14,7 @@ describe('CreateOrder', () => {
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
   let eventEmitterMock: jest.Mocked<IEventEmitter>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     idGeneratorMock = {
       generate: jest.fn().mockReturnValue('testId'),
     } as unknown as jest.Mocked<IIdentifierGenerator>;

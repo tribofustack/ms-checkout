@@ -8,7 +8,7 @@ describe('FindAllOrders', () => {
   let findAllOrders: FindAllOrders;
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     orderRepositoryMock = {
       findAllWithoutFinishedAndOrderedByStatusAndCreateDate: jest.fn(),
       // other repository methods if needed

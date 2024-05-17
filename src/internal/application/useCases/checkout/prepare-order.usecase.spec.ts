@@ -13,7 +13,7 @@ describe('PrepareOrder', () => {
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
   let eventEmitterMock: jest.Mocked<IEventEmitter>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     orderRepositoryMock = {
       findOne: jest.fn(),
     } as unknown as jest.Mocked<IOrderRepository>;

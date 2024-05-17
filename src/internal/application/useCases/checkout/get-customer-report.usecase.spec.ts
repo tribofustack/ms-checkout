@@ -6,7 +6,7 @@ describe('GetCustomerReport', () => {
   let getCustomerReport: GetCustomerReport;
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     orderRepositoryMock = {
       getReportByCustomer: jest.fn(),
       // other repository methods if needed

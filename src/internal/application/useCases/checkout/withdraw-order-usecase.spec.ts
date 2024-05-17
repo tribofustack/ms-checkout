@@ -13,7 +13,7 @@ describe('WithdrawnOrder', () => {
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
   let eventEmitterMock: jest.Mocked<IEventEmitter>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     orderRepositoryMock = {
       findOne: jest.fn(),
     } as unknown as jest.Mocked<IOrderRepository>;
@@ -49,7 +49,7 @@ describe('WithdrawnOrder', () => {
         ],
         createdAt: new Date('2024-05-17T18:23:58.361Z'),
       });
-      order.status = 'Pronto',
+      order.status = 'Pronto';
 
       orderRepositoryMock.findOne.mockResolvedValue(order);
 

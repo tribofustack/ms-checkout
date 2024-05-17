@@ -9,7 +9,7 @@ describe('GetOrderStatus', () => {
   let getOrderStatus: GetOrderStatus;
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     orderRepositoryMock = {
       findOne: jest.fn(),
       getStatus: jest.fn(),
