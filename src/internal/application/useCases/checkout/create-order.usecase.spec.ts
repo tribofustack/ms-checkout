@@ -7,12 +7,14 @@ import { IEventEmitter } from '../../ports/events/event';
 import { Order } from 'src/internal/domain/checkout/entities/order.entity';
 import { OrderItem } from 'src/internal/domain/checkout/entities/order-item.entity';
 import { CreatedOrderEvent } from 'src/internal/domain/checkout/events/order-created.event';
+import { ICheckinService } from '../../ports/integrations/checkin';
 
 describe('CreateOrder', () => {
   let createOrder: CreateOrder;
   let idGeneratorMock: jest.Mocked<IIdentifierGenerator>;
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
   let eventEmitterMock: jest.Mocked<IEventEmitter>;
+  let checkinServiceMock: jest.Mocked<ICheckinService>;
 
   beforeAll(async () => {
     idGeneratorMock = {
@@ -29,12 +31,18 @@ describe('CreateOrder', () => {
       // other event emitter methods if needed
     } as unknown as jest.Mocked<IEventEmitter>;
 
+    checkinServiceMock = {
+      getCustomerById: jest.fn(),
+      verifyProductQuantity: jest.fn(),
+    } as unknown as jest.Mocked<ICheckinService>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateOrder,
         { provide: 'OrderRepository', useValue: orderRepositoryMock },
         { provide: 'IdGenerator', useValue: idGeneratorMock },
         { provide: 'EventEmitter', useValue: eventEmitterMock },
+        { provide: 'CheckinService', useValue: checkinServiceMock },
       ],
     }).compile();
 

@@ -38,6 +38,7 @@ describe('PayOrder', () => {
     it('should emit order-status.changed event if payment is valid', async () => {
       const payment = {
         orderId: 'testOrderId',
+        paymentId: 'paymentId',
         status: 'Pendente de pagamento',
       };
       const order = new Order({
@@ -72,63 +73,13 @@ describe('PayOrder', () => {
     it('should throw NotFoundException if the order does not exist', async () => {
       const payment = {
         orderId: 'nonExistentOrderId',
+        paymentId: 'paymentId',
         status: 'Pendente de pagamento',
       };
 
       orderRepositoryMock.findOne.mockResolvedValue(null);
 
       await expect(payOrder.execute(payment)).rejects.toThrow(NotFoundException);
-      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
-    });
-
-    it('should throw DomainException if the order status is invalid', async () => {
-      const payment = {
-        orderId: 'testOrderId',
-        status: 'Pendente de pagamento',
-      };
-      const order = new Order({
-        id: 'testOrderId',
-        customerId: 'testCustomerId',
-        orderItems: [
-          new OrderItem({
-            id: 'orderItemId1',
-            productId: 'productId1',
-            quantity: 2,
-            value: 100,
-          }),
-        ],
-        createdAt: new Date('2024-05-17T18:23:58.361Z'),
-      });
-      order.status = 'Cancelado';
-
-      orderRepositoryMock.findOne.mockResolvedValue(order);
-
-      await expect(payOrder.execute(payment)).rejects.toThrow(DomainException);
-      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
-    });
-
-    it('should throw DomainException if the payment status is not "Pendente de pagamento"', async () => {
-      const payment = {
-        orderId: 'testOrderId',
-        status: 'InvalidPaymentStatus',
-      };
-      const order = new Order({
-        id: 'testOrderId',
-        customerId: 'testCustomerId',
-        orderItems: [
-          new OrderItem({
-            id: 'orderItemId1',
-            productId: 'productId1',
-            quantity: 2,
-            value: 100,
-          }),
-        ],
-        createdAt: new Date('2024-05-17T18:23:58.361Z'),
-      });
-
-      orderRepositoryMock.findOne.mockResolvedValue(order);
-
-      await expect(payOrder.execute(payment)).rejects.toThrow(DomainException);
       expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
     });
   });

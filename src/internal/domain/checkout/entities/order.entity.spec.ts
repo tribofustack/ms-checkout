@@ -1,6 +1,7 @@
 import { AttributeException, DomainException } from 'src/internal/application/errors';
 import { IOrderItem, OrderItem } from './order-item.entity';
 import { IOrder, Order } from './order.entity';
+import { orderStatusDto } from 'src/internal/domain/checkout/dto/order-status.dto';
 
 describe('Order Entity', () => {
   describe('validate', () => {
@@ -68,6 +69,22 @@ describe('Order Entity', () => {
         expect(error).toBeInstanceOf(DomainException);
       }
       expect(order).toBeFalsy();
+    });
+    it('should update status', () => { 
+      let orderItem: IOrderItem = new OrderItem({
+        id:  'id-test',
+        productId: 'productId-test',
+        value: 10,
+        quantity: 1,      
+      }); 
+      let order = new Order({
+        id: 'id-test',
+        customerId: 'customerId-test',
+        orderItems: Array<IOrderItem>(orderItem),   
+      });
+      order.updateStatus('Aprovado' as orderStatusDto);
+
+      expect(order.status).toBe('Aprovado');
     });
   });
 });
