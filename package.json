@@ -10,8 +10,8 @@
     "start:docker": "npm i && docker compose -p orderly up -d",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest --runInBand  --logHeapUsage",
+    "test:coverage": "cross-env NODE_ENV=test jest --collectCoverage --runInBand --logHeapUsage --detectOpenHandles"
   },
   "engines": {
     "node": ">=18.16.0",
