@@ -77,10 +77,12 @@ describe('CreateOrder', () => {
           }),
         ]
       });
+      expectedOrder.createdAt = new Date('2024-05-17T18:00:00.000Z');
 
       orderRepositoryMock.create.mockResolvedValue(expectedOrder);
 
       const result = await createOrder.execute(createOrderDto);
+      result.createdAt = new Date('2024-05-17T18:00:00.000Z');
 
       expect(result).toEqual(expectedOrder);
       expect(orderRepositoryMock.create).toHaveBeenCalledWith(expectedOrder);

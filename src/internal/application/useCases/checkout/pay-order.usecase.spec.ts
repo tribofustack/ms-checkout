@@ -1,35 +1,47 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GetOrderStatus } from './get-order-status.usecase';
+import { PayOrder } from './pay-order.usecase';
 import { IOrderRepository } from 'src/internal/domain/checkout/repositories/order.repository';
+import { IEventEmitter } from '../../ports/events/event';
 import { NotFoundException } from '@nestjs/common';
+import { DomainException } from 'src/internal/application/errors';
+import { ChangedOrderStatusEvent } from 'src/internal/domain/checkout/events/order-status-changed.event';
 import { Order } from 'src/internal/domain/checkout/entities/order.entity';
 import { OrderItem } from 'src/internal/domain/checkout/entities/order-item.entity';
 
-describe('GetOrderStatus', () => {
-  let getOrderStatus: GetOrderStatus;
+
+describe('PayOrder', () => {
+  let payOrder: PayOrder;
   let orderRepositoryMock: jest.Mocked<IOrderRepository>;
+  let eventEmitterMock: jest.Mocked<IEventEmitter>;
 
   beforeAll(async () => {
     orderRepositoryMock = {
       findOne: jest.fn(),
-      getStatus: jest.fn(),
     } as unknown as jest.Mocked<IOrderRepository>;
+
+    eventEmitterMock = {
+      emit: jest.fn(),
+    } as unknown as jest.Mocked<IEventEmitter>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        GetOrderStatus,
+        PayOrder,
         { provide: 'OrderRepository', useValue: orderRepositoryMock },
+        { provide: 'EventEmitter', useValue: eventEmitterMock },
       ],
     }).compile();
 
-    getOrderStatus = module.get<GetOrderStatus>(GetOrderStatus);
+    payOrder = module.get<PayOrder>(PayOrder);
   });
 
   describe('execute', () => {
-    it('should return the order status and time to wait', async () => {
-      const orderId = 'testOrderId';
+    it('should emit order-status.changed event if payment is valid', async () => {
+      const payment = {
+        orderId: 'testOrderId',
+        status: 'Pendente de pagamento',
+      };
       const order = new Order({
-        id: orderId,
+        id: 'testOrderId',
         customerId: 'testCustomerId',
         orderItems: [
           new OrderItem({
@@ -41,34 +53,67 @@ describe('GetOrderStatus', () => {
         ],
         createdAt: new Date('2024-05-17T18:23:58.361Z'),
       });
-      const statusResponse = { status: 'Pago' };
+      order.status = 'Recebido';
 
       orderRepositoryMock.findOne.mockResolvedValue(order);
-      orderRepositoryMock.getStatus.mockResolvedValue(statusResponse);
 
-      const result = await getOrderStatus.execute(orderId);
+      await payOrder.execute(payment);
 
-      expect(result).toEqual({
-        status: 'Pago',
-        timeToWait: 'Tempo de espera: 45 minutos.',
-      });
-      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(orderId);
-      expect(orderRepositoryMock.getStatus).toHaveBeenCalledWith(orderId);
+      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
+      expect(eventEmitterMock.emit).toHaveBeenCalledWith(
+        'order-status.changed',
+        new ChangedOrderStatusEvent({
+          orderId: order.id,
+          status: 'Pendente de pagamento',
+        }),
+      );
     });
 
     it('should throw NotFoundException if the order does not exist', async () => {
-      const orderId = 'nonExistentOrderId';
+      const payment = {
+        orderId: 'nonExistentOrderId',
+        status: 'Pendente de pagamento',
+      };
 
       orderRepositoryMock.findOne.mockResolvedValue(null);
 
-      await expect(getOrderStatus.execute(orderId)).rejects.toThrow(NotFoundException);
-      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(orderId);
+      await expect(payOrder.execute(payment)).rejects.toThrow(NotFoundException);
+      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
     });
 
-    it('should handle different statuses correctly', async () => {
-      const orderId = 'testOrderId';
+    it('should throw DomainException if the order status is invalid', async () => {
+      const payment = {
+        orderId: 'testOrderId',
+        status: 'Pendente de pagamento',
+      };
       const order = new Order({
-        id: orderId,
+        id: 'testOrderId',
+        customerId: 'testCustomerId',
+        orderItems: [
+          new OrderItem({
+            id: 'orderItemId1',
+            productId: 'productId1',
+            quantity: 2,
+            value: 100,
+          }),
+        ],
+        createdAt: new Date('2024-05-17T18:23:58.361Z'),
+      });
+      order.status = 'Cancelado';
+
+      orderRepositoryMock.findOne.mockResolvedValue(order);
+
+      await expect(payOrder.execute(payment)).rejects.toThrow(DomainException);
+      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
+    });
+
+    it('should throw DomainException if the payment status is not "Pendente de pagamento"', async () => {
+      const payment = {
+        orderId: 'testOrderId',
+        status: 'InvalidPaymentStatus',
+      };
+      const order = new Order({
+        id: 'testOrderId',
         customerId: 'testCustomerId',
         orderItems: [
           new OrderItem({
@@ -81,53 +126,10 @@ describe('GetOrderStatus', () => {
         createdAt: new Date('2024-05-17T18:23:58.361Z'),
       });
 
-      const statuses = [
-        { status: 'Pago', expectedTime: 'Tempo de espera: 45 minutos.' },
-        { status: 'Em preparação', expectedTime: 'Tempo de espera: 30 minutos.' },
-        { status: 'Pronto', expectedTime: 'Pedido pronto para retirar.' },
-        { status: 'Finalizado', expectedTime: 'Pedido foi retirado e finalizado.' },
-      ];
-
       orderRepositoryMock.findOne.mockResolvedValue(order);
 
-      for (const { status, expectedTime } of statuses) {
-        orderRepositoryMock.getStatus.mockResolvedValue({ status });
-
-        const result = await getOrderStatus.execute(orderId);
-
-        expect(result).toEqual({
-          status,
-          timeToWait: expectedTime,
-        });
-      }
-    });
-
-    it('should return default message if status is not recognized', async () => {
-      const orderId = 'testOrderId';
-      const order = new Order({
-        id: orderId,
-        customerId: 'testCustomerId',
-        orderItems: [
-          new OrderItem({
-            id: 'orderItemId1',
-            productId: 'productId1',
-            quantity: 2,
-            value: 100,
-          }),
-        ],
-        createdAt: new Date('2024-05-17T18:23:58.361Z'),
-      });
-      const statusResponse = { status: 'Unknown' };
-
-      orderRepositoryMock.findOne.mockResolvedValue(order);
-      orderRepositoryMock.getStatus.mockResolvedValue(statusResponse);
-
-      const result = await getOrderStatus.execute(orderId);
-
-      expect(result).toEqual({
-        status: 'Unknown',
-        timeToWait: 'Pedido ainda não foi iniciado.',
-      });
+      await expect(payOrder.execute(payment)).rejects.toThrow(DomainException);
+      expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(payment.orderId);
     });
   });
 });
