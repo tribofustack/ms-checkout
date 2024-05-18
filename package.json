@@ -10,8 +10,8 @@
     "start:docker": "npm i && docker compose -p orderly up -d",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest --runInBand  --logHeapUsage",
+    "test:coverage": "cross-env NODE_ENV=test jest --collectCoverage --runInBand --logHeapUsage --detectOpenHandles"
   },
   "engines": {
     "node": ">=18.16.0",
@@ -27,12 +27,9 @@
     "@nestjs/event-emitter": "^2.0.2",
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/mapped-types": "*",
-    "@nestjs/microservices": "^10.3.8",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/sequelize": "^10.0.0",
     "@nestjs/swagger": "^7.1.13",
-    "amqp-connection-manager": "^4.1.14",
-    "amqplib": "^0.10.4",
     "axios": "^1.6.5",
     "bull": "^4.11.4",
     "pg": "^8.11.3",
@@ -46,7 +43,6 @@
   "devDependencies": {
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.2.7",
-    "@types/amqplib": "^0.10.5",
     "@types/axios": "^0.14.0",
     "@types/bull": "^4.10.0",
     "@types/express": "^4.17.17",
