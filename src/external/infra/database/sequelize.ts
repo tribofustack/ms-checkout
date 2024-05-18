@@ -2,7 +2,7 @@ import { SequelizeModule, SequelizeModuleOptions } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { OrderItemModel } from 'src/external/adapters/checkout/sequelize/order-item-model';
 import { OrderModel } from 'src/external/adapters/checkout/sequelize/order-model';
-import { DatabaseException } from 'src/internal/application/errors';
+import { DatabaseException } from 'src/external/infra/errors/database.error';
 
 import { connection } from './connections';
 

@@ -16,7 +16,10 @@ export class PrepareOrder {
 
     async execute(orderId: string): Promise<void> {
         const order = await this.orderRepository.findOne(orderId);
-        if (!order) throw new NotFoundException('Order not found');
+        if (!order) {
+            console.log('\n entrou aqui \n');
+            throw new NotFoundException('Order not found');
+        }
 
         if (order.status !== 'Pago')
             throw new DomainException('Order status is invalid');

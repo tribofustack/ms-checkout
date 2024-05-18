@@ -14,6 +14,8 @@ describe('PrepareOrder', () => {
   let eventEmitterMock: jest.Mocked<IEventEmitter>;
 
   beforeAll(async () => {
+    jest.useFakeTimers();
+
     orderRepositoryMock = {
       findOne: jest.fn(),
     } as unknown as jest.Mocked<IOrderRepository>;
@@ -31,6 +33,10 @@ describe('PrepareOrder', () => {
     }).compile();
 
     prepareOrder = module.get<PrepareOrder>(PrepareOrder);
+  });
+
+  afterAll(() => {
+    jest.useRealTimers(); // Restore real timers after each test
   });
 
   describe('execute', () => {
@@ -55,18 +61,17 @@ describe('PrepareOrder', () => {
 
       await prepareOrder.execute(orderId);
 
+      jest.advanceTimersByTime(20000);
+
       expect(eventEmitterMock.emit).toHaveBeenCalledWith(
         'order-status.changed',
         expect.any(ChangedOrderStatusEvent),
       );
 
-      // Check if the second event is emitted after 20 seconds
-      setTimeout(() => {
-        expect(eventEmitterMock.emit).toHaveBeenCalledWith(
-          'order-status.changed',
-          expect.any(ChangedOrderStatusEvent),
-        );
-      }, 20000);
+      expect(eventEmitterMock.emit).toHaveBeenCalledWith(
+        'order-status.changed',
+        expect.any(ChangedOrderStatusEvent),
+      );
     });
 
     it('should throw NotFoundException if the order does not exist', async () => {

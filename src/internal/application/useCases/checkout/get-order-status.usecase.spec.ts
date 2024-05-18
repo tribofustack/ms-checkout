@@ -61,6 +61,7 @@ describe('GetOrderStatus', () => {
 
       orderRepositoryMock.findOne.mockResolvedValue(null);
 
+      // const notFoundException = new NotFoundException('Order not found');
       await expect(getOrderStatus.execute(orderId)).rejects.toThrow(NotFoundException);
       expect(orderRepositoryMock.findOne).toHaveBeenCalledWith(orderId);
     });
