@@ -1,4 +1,4 @@
-<h1 align="center">Orderly MS Checkin</h1>
+<h1 align="center">Orderly MS Checkout</h1>
 
 <p align="center">
   <a href="#-license">
