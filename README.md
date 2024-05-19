@@ -20,6 +20,10 @@ Key Features
     Get Order Status: Fetches the current status of a specific order.
     Create Customer Report: Generates a detailed report for a specific customer's orders.
 
+Backend Routes
+
+- [Postman Public Collection](https://documenter.getpostman.com/view/13574011/2s9YsM8WDL)
+
 ## ✨ Quality
 
 | Quality Gate Status | Coverage |
