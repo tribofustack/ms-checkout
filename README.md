@@ -1,4 +1,4 @@
-<h1 align="center">Orderly API Gateway</h1>
+<h1 align="center">Orderly MS Checkin</h1>
 
 <p align="center">
   <a href="#-license">
@@ -8,8 +8,21 @@
 
 ## 💻 Project
 
+Overview
 
-Orderly is a cutting-edge web system designed to streamline operations for restaurant and food businesses (RMS). It draws from the principles of **Domain-Driven Design (DDD)** and **Architectural Concepts** to ensure scalability, maintainability, and a robust integration capability.
+This microservice is designed to handle the entire lifecycle of order processing. It provides backend routes that facilitate various order-related operations, ensuring a seamless and efficient order management process.
+Key Features
+
+    Create Order: Initiates the creation of a new order.
+    Prepare Order: Prepares an order for further processing.
+    Withdraw Order: Marks an order as withdrawn.
+    Get Orders: Retrieves a list of orders, with optional filtering by customer ID and order status.
+    Get Order Status: Fetches the current status of a specific order.
+    Create Customer Report: Generates a detailed report for a specific customer's orders.
+
+Backend Routes
+
+- [Postman Public Collection](https://documenter.getpostman.com/view/13574011/2s9YsM8WDL)
 
 ## ✨ Quality
 
