@@ -1,4 +1,4 @@
-<h1 align="center">Orderly API Gateway</h1>
+<h1 align="center">Orderly MS-Checkout</h1>
 
 <p align="center">
   <a href="#-license">
@@ -7,7 +7,6 @@
 </p>
 
 ## 💻 Project
-
 
 Orderly is a cutting-edge web system designed to streamline operations for restaurant and food businesses (RMS). It draws from the principles of **Domain-Driven Design (DDD)** and **Architectural Concepts** to ensure scalability, maintainability, and a robust integration capability.
 
