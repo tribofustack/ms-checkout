@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Channel, Connection, Message, connect } from 'amqplib';
-import { env } from 'src/internal/application/configs/env';
-import { IMessageBroker } from 'src/internal/application/ports/queues/message-broker';
+import { Injectable } from "@nestjs/common";
+import { Channel, Connection, Message, connect } from "amqplib";
+import { env } from "src/internal/application/configs/env";
+import { IMessageBroker } from "src/internal/application/ports/queues/message-broker";
 
 @Injectable()
 export class RabbitMQ implements IMessageBroker {
@@ -14,7 +14,7 @@ export class RabbitMQ implements IMessageBroker {
       password: env.amqpPass,
       port: env.amqpPort,
       username: env.amqpUserName,
-      vhost: '/',
+      vhost: "/",
     };
     this.conn = await connect(connection);
     this.channel = await this.conn.createChannel();
@@ -27,7 +27,7 @@ export class RabbitMQ implements IMessageBroker {
   }
 
   async createExchange(exchangeName: string): Promise<void> {
-    await this.channel.assertExchange(exchangeName, 'topic', { durable: true });
+    await this.channel.assertExchange(exchangeName, "topic", { durable: true });
   }
 
   async bindQueueInExchange({
