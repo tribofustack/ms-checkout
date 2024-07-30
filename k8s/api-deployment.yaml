@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: ms-checkout-container
-        image: dealmachine/checkout-api:3
+        image: dealmachine/checkout-api:latest
+        imagePullPolicy: Always
         workingDir: /usr/checkout/api
         ports:
         - containerPort: 3002

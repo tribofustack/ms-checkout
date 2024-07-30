@@ -1,10 +1,5 @@
-import { orderStatusDto } from '../dto/order-status.dto';
-
-type IConstructorDto = {
-  orderId: string;
-  status: orderStatusDto;
-};
+import { IOrder } from "../entities/order.entity";
 
 export class ChangedOrderStatusEvent {
-  constructor(public data: IConstructorDto) {}
+  constructor(public order: IOrder) {}
 }

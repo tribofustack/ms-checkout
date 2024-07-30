@@ -1,37 +1,38 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IOrderRepository } from 'src/internal/domain/checkout/repositories/order.repository';
-import { DomainException } from 'src/internal/application/errors';
-import { ChangedOrderStatusEvent } from 'src/internal/domain/checkout/events/order-status-changed.event';
-import { IEventEmitter } from '../../ports/events/event';
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { IOrderRepository } from "src/internal/domain/checkout/repositories/order.repository";
+import { DomainException } from "src/internal/application/errors";
+import { ChangedOrderStatusEvent } from "src/internal/domain/checkout/events/order-status-changed.event";
+import { IEventEmitter } from "../../ports/events/event";
 
 @Injectable()
 export class PrepareOrder {
-    constructor(
-        @Inject('OrderRepository')
-        private orderRepository: IOrderRepository,
+  constructor(
+    @Inject("OrderRepository")
+    private orderRepository: IOrderRepository,
+    @Inject("EventEmitter")
+    private eventEmitter: IEventEmitter,
+  ) {}
 
-        @Inject('EventEmitter')
-        private eventEmitter: IEventEmitter,
-    ) { }
+  async execute(orderId: string): Promise<void> {
+    const order = await this.orderRepository.findOne(orderId);
+    if (!order) throw new NotFoundException("Order not found");
 
-    async execute(orderId: string): Promise<void> {
-        const order = await this.orderRepository.findOne(orderId);
-        if (!order) throw new NotFoundException('Order not found');
+    if (order.status !== "Aprovado")
+      throw new DomainException("Order status is invalid");
 
-        if (order.status !== 'Aprovado')
-            throw new DomainException('Order status is invalid');
+    order.updateStatus("Em preparação");
+    this.eventEmitter.emit(
+      "order-status.changed",
+      new ChangedOrderStatusEvent(order),
+    );
 
-        this.eventEmitter.emit(
-            'order-status.changed',
-            new ChangedOrderStatusEvent({ orderId, status: 'Em preparação' }),
-        );
-
-        console.log('Preparing...');
-        setTimeout(() => {
-            this.eventEmitter.emit(
-                'order-status.changed',
-                new ChangedOrderStatusEvent({ orderId, status: 'Pronto' }),
-            );
-        }, 20000);
-    }
+    console.log("Preparing...");
+    setTimeout(() => {
+      order.updateStatus("Pronto");
+      this.eventEmitter.emit(
+        "order-status.changed",
+        new ChangedOrderStatusEvent(order),
+      );
+    }, 20000);
+  }
 }
