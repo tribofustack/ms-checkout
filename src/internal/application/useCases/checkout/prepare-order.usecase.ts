@@ -3,7 +3,6 @@ import { IOrderRepository } from "src/internal/domain/checkout/repositories/orde
 import { DomainException } from "src/internal/application/errors";
 import { ChangedOrderStatusEvent } from "src/internal/domain/checkout/events/order-status-changed.event";
 import { IEventEmitter } from "../../ports/events/event";
-import { orderStatusDto } from "src/internal/domain/checkout/dto/order-status.dto";
 
 @Injectable()
 export class PrepareOrder {

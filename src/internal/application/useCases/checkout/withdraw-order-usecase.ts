@@ -9,7 +9,6 @@ export class WithdrawnOrder {
   constructor(
     @Inject("OrderRepository")
     private orderRepository: IOrderRepository,
-
     @Inject("EventEmitter")
     private eventEmitter: IEventEmitter,
   ) {}
