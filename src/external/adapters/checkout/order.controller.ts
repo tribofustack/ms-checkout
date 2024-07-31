@@ -47,6 +47,7 @@ export class OrderController {
     try {
       return await this.createOrder.execute(createOrderDto);
     } catch (err) {
+      console.error(err.message);
       return responseError(err);
     }
   }
