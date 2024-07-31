@@ -7,6 +7,11 @@ import { IIdentifierGenerator } from "src/internal/application/ports/tokens/id-g
 import { IEventEmitter } from "../../ports/events/event";
 import { ICheckinService } from "../../ports/integrations/checkin";
 import { CreatedOrderEvent } from "src/internal/domain/checkout/events/order-created.event";
+import {
+  verifyUuid,
+  verifyFilePaths,
+  sanitizeOutput,
+} from "src/external/utils/validator";
 
 @Injectable()
 export class CreateOrder {
@@ -21,24 +26,30 @@ export class CreateOrder {
     private checkinService: ICheckinService,
   ) {}
 
-  async execute(createOrderDto: CreateOrderDto): Promise<Order> {
-    const { products } = createOrderDto;
+  async execute({ customerId, products }: CreateOrderDto): Promise<Order> {
+    verifyUuid(customerId);
+    verifyFilePaths(customerId);
 
-    await this.checkinService.getCustomerById(createOrderDto.customerId);
-    await this.checkinService.verifyProductQuantity(createOrderDto.products);
+    products.map((prod) => {
+      verifyUuid(prod.id);
+      verifyFilePaths(prod.id);
+    });
+
+    await this.checkinService.getCustomerById(customerId);
+    await this.checkinService.verifyProductQuantity(products);
 
     const orderItems = products.map((product) => {
       return new OrderItem({
-        id: this.idGenerator.generate(),
-        productId: product.id,
+        id: sanitizeOutput(this.idGenerator.generate()),
+        productId: sanitizeOutput(product.id),
         quantity: product.quantity,
         value: product.price,
       });
     });
 
     const order = new Order({
-      customerId: createOrderDto.customerId,
-      id: this.idGenerator.generate(),
+      customerId: sanitizeOutput(customerId),
+      id: sanitizeOutput(this.idGenerator.generate()),
       orderItems,
       createdAt: new Date(),
     });
