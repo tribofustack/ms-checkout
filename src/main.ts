@@ -4,6 +4,7 @@ import { SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import { env } from "./internal/application/configs/env";
 import helmet from "helmet";
+import { NextFunction, Request, Response } from "express";
 
 async function bootstrap() {
   console.time("Start app");
@@ -11,6 +12,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(helmet());
+
+  // Remove o cabeçalho "X-Powered-By"
+  app.use(helmet.hidePoweredBy());
+
+  // Remove completamente o cabeçalho "Server"
+  app.use((_req: Request, res: Response, next: NextFunction) => {
+    res.removeHeader("Server");
+    next();
+  });
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup("/", app, document);

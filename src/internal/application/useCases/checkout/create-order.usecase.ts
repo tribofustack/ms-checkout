@@ -36,6 +36,7 @@ export class CreateOrder {
     });
 
     await this.checkinService.getCustomerById(customerId);
+
     await this.checkinService.verifyProductQuantity(products);
 
     const orderItems = products.map((product) => {
